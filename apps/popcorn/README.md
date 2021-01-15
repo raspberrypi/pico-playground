@@ -33,4 +33,4 @@ Pause and then unpause to reset playback speed to 1x
 
 ### Converting
 
-TODO - will upload a converter and instructions soon.
+see [here](converter/README.md)
