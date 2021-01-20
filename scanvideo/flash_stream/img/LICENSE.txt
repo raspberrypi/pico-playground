@@ -1,0 +1,12 @@
+Upstream-Name: ubuntu-wallpapers
+Source: https://launchpad.net/ubuntu-wallpapers
+
+Files: *.png
+Copyright: 2018-2020 Ubuntu community contributors
+License: CC-BY-SA 3.0
+
+The wallpapers used are:
+
+Lighthouse at sunrise, by Frenchie Smalls
+Stone Mountain, by Brad Huchteman
+Voss, by fortuneblues
