@@ -29,7 +29,7 @@ static void rtc_sleep(void) {
             .sec   = 00
     };
 
-    // Alarm 30 seconds later
+    // Alarm 10 seconds later
     datetime_t t_alarm = {
             .year  = 2020,
             .month = 06,
