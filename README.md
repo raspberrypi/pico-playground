@@ -5,12 +5,6 @@ Note that most of these examples are neither fleshed out nor well documented. Th
 the purpose of playing with/testing particular areas of functionality (mostly audio/video related)
 
 Finally, you may wonder why many of these demos set the system clock to 48Mhz. The reason is that until we had physical
-chips, we were running at a fixed 48Mhz system clock on FPGA. Most of these examples were written before the 
-RP2040 design was final and as such were all run against FPGA. As a result some of the examples do things in a way 
-that you wouldn't necessarily need to if you had more clock speed available (which you do), but on the plus side,
-you have that much more time to do even more things!
-
-Finally, you may wonder why many of these demos set the system clock to 48Mhz. The reason is that until we had physical
 chips, we were running at a fixed 48Mhz system clock using an FPGA. Most of these examples were written before the 
 RP2040 design was final, so were all developed with that fixed 48MHz system clock. As a result some of the examples do things in a way 
 that you wouldn't necessarily need to if you had more clock speed available (which you do), but on the plus side,
