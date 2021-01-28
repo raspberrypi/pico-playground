@@ -19,7 +19,6 @@ if (PICO_ON_DEVICE)
                 PICO_USE_STACK_GUARDS=1
                 PICO_SCANVIDEO_ADJUST_BUS_PRIORITY=1
                 PICO_SCANVIDEO_ENABLE_VIDEO_CLOCK_DOWN=1
-        #        VIDEO_TIME_CRITICAL_CODE_SECTION=.core0.video
                 PLATYPUS_565
                 VIDEO_565
                 VIDEO_DBI
@@ -27,13 +26,6 @@ if (PICO_ON_DEVICE)
                 PICO_SCANVIDEO_LINKED_SCANLINE_BUFFERS=1 # we do two rows at a time
                 )
 
-        if (PICO_BOARD STREQUAL "vgaboard")
-            add_compile_definitions(popcorn PRIVATE
-                PICO_DEFAULT_UART=0
-                PICO_DEFAULT_UART_TX_PIN=28
-                PICO_DEFAULT_UART_RX_PIN=29
-            )
-        endif()
         target_link_libraries(popcorn
                 pico_multicore
                 pico_stdlib
