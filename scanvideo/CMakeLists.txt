@@ -10,5 +10,6 @@ if (TARGET pico_scanvideo) # not all build types support it
     add_subdirectory(mario_tiles)
     add_subdirectory(scanvideo_minimal)
     add_subdirectory(sprite_demo)
+    add_subdirectory(test_pattern)
     add_subdirectory(textmode)
 endif()

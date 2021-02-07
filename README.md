@@ -41,6 +41,7 @@ Name|Description
 [render](scanvideo/render)| A very dated rendering library used by [demo1](scanvideo/demo1) - avoid!
 [sprite](scanvideo/sprite)| A small sprite library used by [sprite_demo](scanvideo/scanvideo_minimal)
 [sprite_demo](scanvideo/sprite_demo)| Some bouncing Eben heads
+[test_pattern](scanvideo/test_pattern)| Display color bars
 [textmode](scanvideo/textmode)| Shows off chained DMA to generate scanlines out of glyph fragments via DMA/PIO
 
 
