@@ -14,6 +14,9 @@
 #include "pico/sync.h"
 #include "font.h"
 
+// set this to 3, 4 or 5 for smallest to biggest font
+#define FRAGMENT_WORDS 4
+
 #if PICO_ON_DEVICE
 
 #include "hardware/structs/bus_ctrl.h"
@@ -168,8 +171,6 @@ uint32_t *font_raw_pixels;
 #else
 uint32_t font_raw_pixels[16384];
 #endif
-#define FRAGMENT_WORDS 4
-//#define FRAGMENT_WORDS 5
 #define FONT_WIDTH_WORDS FRAGMENT_WORDS
 #if FRAGMENT_WORDS == 5
 const lv_font_t *font = &ubuntu_mono10;
@@ -406,8 +407,8 @@ bool render_scanline_bg(struct scanvideo_scanline_buffer *dest, int core) {
     // todo for SOME REASON, 80 is the max we can do without starting to really get bus delays (even with priority)... not sure how this could be
     // todo actually it seems it can work, it just mostly starts incorrectly synced!?
 #define COUNT MIN(vga_mode.width/(FRAGMENT_WORDS*2)-1, 80)//MAX_SCANLINE_BUFFER_WORDS / 2 - 2)
-#undef COUNT
-#define COUNT 79
+//#undef COUNT
+//#define COUNT 79
     // we need to take up 5 words, since we have fixed width
 #if PICO_SCANVIDEO_PLANE1_FIXED_FRAGMENT_DMA
     dest->fragment_words = FRAGMENT_WORDS;
@@ -507,7 +508,9 @@ void go_core1(void (*execute)()) {
 }
 
 int main(void) {
+#if PICO_SCANVIDEO_48MHZ
     set_sys_clock_48mhz();
+#endif
     gpio_put(27, 0);
 
     setup_default_uart();

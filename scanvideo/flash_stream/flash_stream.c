@@ -133,7 +133,7 @@ void __time_critical_func(render_scanline)(struct scanvideo_scanline_buffer *des
 }
 
 int main(void) {
-    set_sys_clock_khz(192000, true);
+    set_sys_clock_khz(200000, true);
     setup_default_uart();
 
 #ifdef PICO_SMPS_MODE_PIN

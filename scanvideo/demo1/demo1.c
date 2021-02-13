@@ -43,17 +43,6 @@ bool render_scanline_test_pattern(struct scanvideo_scanline_buffer *dest, int co
 bool render_scanline_pi(struct scanvideo_scanline_buffer *dest, int core);
 
 extern const struct scanvideo_pio_program video_24mhz_composable;
-const struct scanvideo_mode vga_mode_320x256_60 =
-        {
-                .default_timing = &vga_timing_640x480_60_default,
-                .pio_program = &video_24mhz_composable,
-                .width = 320,
-                .height = 256,
-                .xscale = 2,
-                .yscale = 480,
-                .yscale_denominator = 256
-        };
-
 
 //#define vga_mode vga_mode_1080p
 //#define vga_mode vga_mode_720p
@@ -612,7 +601,9 @@ int main(void) {
 
     gpio_put(27, 0);
 #if PICO_ON_DEVICE && !PICO_ON_FPGA
+#if PICO_SCANVIDEO_48MHz
     set_sys_clock_khz(96000, true);
+#endif
 //    set_sys_clock_48();
 #endif
 

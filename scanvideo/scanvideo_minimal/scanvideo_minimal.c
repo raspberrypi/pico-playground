@@ -104,7 +104,9 @@ void render_scanline(struct scanvideo_scanline_buffer *dest, int core) {
 
 
 int main(void) {
+#if PICO_SCANVIDEO_48MHz
     set_sys_clock_48mhz();
+#endif
     // Re init uart now that clk_peri has changed
     setup_default_uart();
 

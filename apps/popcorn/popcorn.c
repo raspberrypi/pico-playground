@@ -1617,7 +1617,11 @@ void setup_audio() {
 }
 
 int main(void) {
+#if PICO_SCANVIDEO_48MHZ
     set_sys_clock_48mhz();
+#else
+    set_sys_clock_khz(50000, true);
+#endif
 
 #if USE_RGB_LOW_FOR_DEBUG_PINS
     gpio_dir_out_mask(0x421);

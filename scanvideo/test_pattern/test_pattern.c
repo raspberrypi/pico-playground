@@ -27,7 +27,6 @@ static semaphore_t video_initted;
 static bool invert;
 
 int main(void) {
-    set_sys_clock_48mhz();
     stdio_init_all();
 
     // create a semaphore to be posted when video init is complete

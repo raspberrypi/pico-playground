@@ -67,5 +67,4 @@ Name|Description
 ## Networking
 Name|Description
 ---|---
-[usb_host_webserver](net/usb_host_webserver)| A simple web server implemented as  
-
+[usb_host_webserver](net/usb_host_webserver)| A simple web server

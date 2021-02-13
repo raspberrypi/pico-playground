@@ -24,6 +24,8 @@ if (PICO_ON_DEVICE)
                 VIDEO_DBI
 
                 PICO_SCANVIDEO_LINKED_SCANLINE_BUFFERS=1 # we do two rows at a time
+
+                #PICO_SCANVIDEO_48MHZ # still uses this for now
                 )
 
         target_link_libraries(popcorn

@@ -7,6 +7,7 @@ if (TARGET pico_scanvideo_dpi)
 
     target_compile_definitions(demo1
             PRIVATE
+            #PICO_SCANVIDEO_48MHZ
             # video overlay is distracting
 #            PICO_SCANVIDEO_PLANE_COUNT=3
             )

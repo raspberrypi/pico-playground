@@ -239,19 +239,24 @@ void __time_critical_func(frame_update_logic)() {
 }
 
 int main(void) {
+    uint base_freq;
+#if PICO_SCANVIDEO_48MHZ
+    base_freq = 48000;
+#else
+    base_freq = 50000;
+#endif
 #if PICO_ON_DEVICE
 #ifdef TURBO_BOOST
     hw_set_bits(&mm_vreg_and_chip_reset->vreg, VREG_AND_CHIP_RESET_VREG_VSEL_BITS);
     sleep_ms(10);
-    set_sys_clock_khz(48000*6, true);
+    set_sys_clock_khz(base_freq*6, true);
 #else
-    //set_sys_clock(1536*MHZ, 4, 2);
-    set_sys_clock_khz(48000 * 4, true);
+    set_sys_clock_khz(base_freq * 3, true);
 #endif
 #endif
     // Re init uart now that clk_peri has changed
     setup_default_uart();
-    gpio_debug_pins_init();
+//    gpio_debug_pins_init();
 
     return vga_main();
 }
