@@ -30,6 +30,8 @@ Name|Description
 In _scanout_ video, every pixel is driven by the PIO every frame, and a framebuffer is not (necessarily) used (which
 is useful when you only have 264K of RAM).
 
+For a fuller description of scanout video see [here](https://github.com/raspberrypi/pico-extras/blob/master/src/common/pico_scanvideo/README.adoc)
+
 Name|Description
 ---|---
 [demo1](scanvideo/demo1)| So named because it was the first demo program written that used video.. it is a bit dated now and hails from a time where there was _much_ less RAM on the RP2040
