@@ -14,7 +14,7 @@ you have that much more time to do even more things!
 
 Name|Description 
 ---|---
-[popcorn](apps/popcorn)| This is a movie player for 30fps 320x240 movies with 44100 stereo sound, read in a custom format from SD card... it can even play backwards :-) TODO: add a link to big buck bunny in the right format TODO: add converter
+[popcorn](apps/popcorn)| This is a movie player for 30fps 320x240 movies with 44100 stereo sound, read in a custom format from SD card... it can even play backwards :-) Sample movie file linked from [here](apps/popcorn/README.md).
 [usb_sound_card](apps/usb_sound_card)| A no frills but functional USB sound card... hooked up via our old (pre TinyUSB) USB device stack. Keeping it around as it works nicely!
 
 ## Audio
