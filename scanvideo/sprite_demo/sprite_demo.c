@@ -177,10 +177,9 @@ int main(void) {
     set_sys_clock(1536*MHZ, 4, 1);
 #else
 #if PICO_SCANVIDEO_48MHz
-    set_sys_clock_48mhz();
+    set_sys_clock_khz(192000, true);
 #endif
-
-    set_sys_clock_pll(1536 * MHZ, 4, 2);
+    set_sys_clock_khz(200000, true);
 #endif
     // Re init uart now that clk_peri has changed
     setup_default_uart();
