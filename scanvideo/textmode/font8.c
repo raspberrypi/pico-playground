@@ -1,6 +1,7 @@
 #include "font.h"
 
 /*******************************************************************************
+ * Converted via https://lvgl.io/tools/fontconverter
  * Size: 16 px
  * Bpp: 4
  * Opts:
