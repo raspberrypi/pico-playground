@@ -174,12 +174,13 @@ int main(void) {
 #ifdef TURBO_BOOST
     hw_set_bits(&mm_vreg_and_chip_reset->vreg, VREG_AND_CHIP_RESET_VREG_VSEL_BITS);
     sleep_ms(10);
-    set_sys_clock(1536*MHZ, 4, 1);
+    set_sys_clock_khz(400000, true);
 #else
 #if PICO_SCANVIDEO_48MHz
     set_sys_clock_khz(192000, true);
-#endif
+#else
     set_sys_clock_khz(200000, true);
+#endif
 #endif
     // Re init uart now that clk_peri has changed
     setup_default_uart();
