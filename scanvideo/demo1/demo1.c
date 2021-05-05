@@ -7,9 +7,7 @@
 
 #include <string.h>
 #include "pico.h"
-#include "hardware/uart.h"
 #include "hardware/gpio.h"
-#include "hardware/divider.h"
 #include "spans.h"
 #include "pico/scanvideo.h"
 #include "pico/scanvideo/composable_scanline.h"
@@ -421,12 +419,13 @@ int vga_main(void) {
 #endif
 #ifndef IRQS_ON_CORE1
     setup_video();
+#else
+    sem_acquire_blocking(&video_setup_complete);
 #endif
 #ifdef RENDER_ON_CORE0
     render_loop();
 #else
 
-    sem_acquire(&video_setup_complete);
     while (true) {
 #ifndef TEST_WAIT_FOR_SCANLINE
         // Just use vblank to print out a value every second
@@ -439,7 +438,7 @@ int vga_main(void) {
 #else
         static uint32_t sl = 0;
         sl = scanvideo_wait_for_scanline_complete(sl);
-        scanline_color = (scanline_color + 0x10u) & 0xffu;
+        scanline_color = (scanline_color + 1) & 0x1fu;
 #endif
     }
 #endif
@@ -554,7 +553,7 @@ bool render_scanline_test_pattern(struct scanvideo_scanline_buffer *dest, int co
 #ifndef TEST_WAIT_FOR_SCANLINE
             uint16_t c = 0xffff;
 #else
-            uint16_t c = 0x0421 * (scanline_color >> 4);
+            uint16_t c = PICO_SCANVIDEO_PIXEL_FROM_RGB5(1,1,1) * scanline_color;
 #endif
             if (w == 1) {
                 buf16[pos++] = COMPOSABLE_RAW_1P;
