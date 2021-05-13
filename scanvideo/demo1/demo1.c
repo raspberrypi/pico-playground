@@ -43,8 +43,10 @@ bool render_scanline_pi(struct scanvideo_scanline_buffer *dest, int core);
 extern const struct scanvideo_pio_program video_24mhz_composable;
 
 //#define vga_mode vga_mode_1080p
+//#define vga_mode vga_mode_1024x768_60
 //#define vga_mode vga_mode_720p
 #define vga_mode vga_mode_640x480_60
+
 //#define vga_mode vga_mode_320x256_60
 //#define vga_mode vga_mode_320x240_60
 //#define vga_mode vga_mode_213x160_60
@@ -601,9 +603,17 @@ int main(void) {
     gpio_put(27, 0);
 #if PICO_ON_DEVICE && !PICO_ON_FPGA
 #if PICO_SCANVIDEO_48MHz
+    /* set to double frequency 48Mhz for some examples which were written for a higher clock speed */
     set_sys_clock_khz(96000, true);
 #endif
-//    set_sys_clock_48();
+    switch (vga_mode.default_timing->clock_freq) {
+        case 65000000:
+            set_sys_clock_khz(130000, true);
+            break;
+        default:
+            // may cause panic later
+            break;
+    }
 #endif
 
     // Re init uart now that clk_peri has changed
