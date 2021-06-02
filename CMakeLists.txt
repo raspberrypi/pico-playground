@@ -15,7 +15,6 @@ pico_sdk_init()
 
 add_subdirectory(audio)
 add_subdirectory(apps)
-add_subdirectory(net)
 add_subdirectory(reset)
 add_subdirectory(scanvideo)
 add_subdirectory(sleep)

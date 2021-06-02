@@ -65,8 +65,3 @@ even though it is in the Pico SDK
 Name|Description
 ---|---
 [stdio_pio](stdio/pio)| Demonstrates adding a custom STDIO driver using a PIO UART
-
-## Networking
-Name|Description
----|---
-[usb_host_webserver](net/usb_host_webserver)| A simple web server
