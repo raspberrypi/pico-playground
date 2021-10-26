@@ -17,7 +17,7 @@
 #if PICO_ON_DEVICE
 
 #include "hardware/clocks.h"
-#include "hardware/structs/vreg_and_chip_reset.h"
+#include "hardware/vreg.h"
 
 #endif
 
@@ -44,10 +44,38 @@ static inline fixed float_to_fixed(float x) {
     return (fixed) (x * (float) (1u << FRAC_BITS));
 }
 
+#if !PICO_ON_DEVICE || (FRAC_BITS != 25)
 static inline fixed fixed_mult(fixed a, fixed b) {
     int64_t r = ((int64_t) a) * b;
     return (int32_t) (r >> FRAC_BITS);
 }
+#else
+// Since we're trying to go fast, do a better multiply of 32x32 preserving the bits we want
+static inline fixed fixed_mult(fixed a, fixed b) {
+    uint32_t tmp1, tmp2, tmp3;
+    __asm__ volatile (
+    ".syntax unified\n"
+    "asrs   %[r_tmp1], %[r_b], #16 \n" // r_tmp1 = BH
+    "uxth   %[r_tmp2], %[r_a]      \n" // r_tmp2 = AL
+    "muls   %[r_tmp2], %[r_tmp1]   \n" // r_tmp2 = BH * AL
+    "asrs   %[r_tmp3], %[r_a], #16 \n" // r_tmp3 = AH
+    "muls   %[r_tmp1], %[r_tmp3]   \n" // r_tmp1 = BH * AH
+    "uxth   %[r_b], %[r_b]         \n" // r_b = BL
+    "uxth   %[r_a], %[r_a]         \n" // r_a = AL
+    "muls   %[r_a], %[r_b]         \n" // r_a = AL * BL
+    "muls   %[r_b], %[r_tmp3]      \n" // r_b = BL * AH
+    "add    %[r_b], %[r_tmp2]      \n" // r_b = BL * AH + BH * AL
+    "lsls   %[r_tmp1], #32 - 25    \n" // r_tmp1 = (BH * AH) >> (32 - FRAC_BITS)
+    "lsrs   %[r_a], #16            \n" // r_a = (AL & BL) H
+    "add    %[r_a], %[r_b]         \n"
+    "asrs   %[r_a], #25- 16        \n" // r_a = (BL * AH + BH * AL) H | (AL & BL) H >> (32 - FRAC_BITS)
+    "add    %[r_a], %[r_tmp1]      \n"
+    : [r_a] "+l" (a), [r_b] "+l" (b), [r_tmp1] "=&l" (tmp1), [r_tmp2] "=&l" (tmp2), [r_tmp3] "=&l" (tmp3)
+    :
+    );
+    return a;
+}
+#endif
 
 #endif
 
@@ -247,7 +275,7 @@ int main(void) {
 #endif
 #if PICO_ON_DEVICE
 #ifdef TURBO_BOOST
-    hw_set_bits(&mm_vreg_and_chip_reset->vreg, VREG_AND_CHIP_RESET_VREG_VSEL_BITS);
+    vreg_set_voltage(VREG_VOLTAGE_1_30);
     sleep_ms(10);
     set_sys_clock_khz(base_freq*6, true);
 #else
