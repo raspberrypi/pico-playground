@@ -99,23 +99,23 @@ uint8_t dp[] = {
         15,  7, 13,  5
 };
 
-static inline void dither(uint8_t& c, uint x3, uint y3) {
-    uint x = c + dp[x3 + y3 * 4] / 2;
+static inline void dither(uint8_t& c, uint32_t x3, uint32_t y3) {
+    uint32_t x = c + dp[x3 + y3 * 4] / 2;
     if (x > 255) x = 255;
     c = (x & 0xf8u);
 }
 
-static inline void dither(uint8_t& r, uint8_t& g, uint8_t &b, uint x3, uint y3) {
+static inline void dither(uint8_t& r, uint8_t& g, uint8_t &b, uint32_t x3, uint32_t y3) {
     dither(r, x3, y3);
     dither(g, x3, y3);
     dither(b, x3, y3);
 }
 
-void dither_image(uint w, uint h, std::vector<unsigned char> &source)
+void dither_image(uint32_t w, uint32_t h, std::vector<unsigned char> &source)
 {
-    for(uint y=0; y < h; y++) {
+    for(uint32_t y=0; y < h; y++) {
         uint8_t *base = &source[y * w * 3];
-        for(uint x = 0; x < w; x+= 4) {
+        for(uint32_t x = 0; x < w; x+= 4) {
 #if 1
             dither(base[0], base[1], base[2], 0, y&3u);
             dither(base[3], base[4], base[5], 1, y&3u);
@@ -133,20 +133,20 @@ static int worst_frame = 0;
 static long total_cost = 0;
 static long total_vals = 0;
 
-static uint rgb16(uint8_t r, uint8_t g, uint8_t b) {
+static uint32_t rgb16(uint8_t r, uint8_t g, uint8_t b) {
     return ((b>>3) << 11) | ((g>>3)<<6) | (r>>3);
 }
 
-static uint rgb15(uint8_t r, uint8_t g, uint8_t b) {
+static uint32_t rgb15(uint8_t r, uint8_t g, uint8_t b) {
     return ((b>>3) << 10) | ((g>>3)<<5) | (r>>3);
 }
 
-static inline void write_word(uint8_t *&dest, uint v) {
+static inline void write_word(uint8_t *&dest, uint32_t v) {
     *dest++ = v & 0xff;
     *dest++ = v >> 8;
 }
 
-static inline void write_word_be(uint8_t *&dest, uint v) {
+static inline void write_word_be(uint8_t *&dest, uint32_t v) {
     *dest++ = v >> 8;
     *dest++ = v & 0xff;
 }
@@ -156,7 +156,7 @@ static uint32_t *row1_222;
 static uint32_t *row0_5;
 static uint32_t *row1_5;
 
-static inline uint get_key(uint min, uint da, uint db, uint dc, uint dd) {
+static inline uint32_t get_key(uint32_t min, uint32_t da, uint32_t db, uint32_t dc, uint32_t dd) {
     assert(da >= min);
     assert(db >= min);
     assert(dc >= min);
@@ -169,7 +169,7 @@ static inline uint get_key(uint min, uint da, uint db, uint dc, uint dd) {
 
 
 #ifndef ENCODE_565
-bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char> &source, std::vector<unsigned char> &dest, std::vector<uint32_t> &line_offsets, uint max_rdist, uint max_gdist, uint max_bdist, uint extra_line_words = 0)
+bool compress_image(const char *name, uint32_t w, uint32_t h, std::vector<unsigned char> &source, std::vector<unsigned char> &dest, std::vector<uint32_t> &line_offsets, uint32_t max_rdist, uint32_t max_gdist, uint32_t max_bdist, uint32_t extra_line_words = 0)
 {
     bool use_56bit_raw = true;
 
@@ -191,21 +191,21 @@ bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char>
             key_dist[sorted_keys[i]] = 0;
             for(int o = -3; o < 3; o++) { // todo really?
 //                for(int o=0;o<1;o++) {
-                uint da = (sorted_keys[i] >> (5u * 3u)) & 0x1f;
-                uint db = (sorted_keys[i] >> (5u * 2u)) & 0x1f;
-                uint dc = (sorted_keys[i] >> (5u * 1u)) & 0x1f;
-                uint dd = (sorted_keys[i] >> (5u * 0u)) & 0x1f;
+                uint32_t da = (sorted_keys[i] >> (5u * 3u)) & 0x1f;
+                uint32_t db = (sorted_keys[i] >> (5u * 2u)) & 0x1f;
+                uint32_t dc = (sorted_keys[i] >> (5u * 1u)) & 0x1f;
+                uint32_t dd = (sorted_keys[i] >> (5u * 0u)) & 0x1f;
 //                if (da == db && db == dc & dc == dd && (o == da || o == -da)) continue;
-                for(uint a = 0; a < 32; a++)
+                for(uint32_t a = 0; a < 32; a++)
                 {
-                    for(uint b = 0; b < 32; b++)
+                    for(uint32_t b = 0; b < 32; b++)
                     {
-                        for(uint c = 0; c < 32; c++)
+                        for(uint32_t c = 0; c < 32; c++)
                         {
-                            for(uint d = 0; d < 32; d++)
+                            for(uint32_t d = 0; d < 32; d++)
                             {
-                                uint j = (a << (5u * 3u)) | (b << (5u * 2u)) | (c << (5u * 1u) | (d << (5u * 0u)));
-                                uint score = (a + o - da) * (a + o - da);
+                                uint32_t j = (a << (5u * 3u)) | (b << (5u * 2u)) | (c << (5u * 1u) | (d << (5u * 0u)));
+                                uint32_t score = (a + o - da) * (a + o - da);
                                 score += (b + o - db) * (b + o - db);
                                 score += (c + o - dc) * (c + o - dc);
                                 score += (d + o - dd) * (d + o - dd);
@@ -230,7 +230,7 @@ bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char>
         {
             assert(key_dist[sorted_keys[i]] == 0);
         }
-        uint t = 0;
+        uint32_t t = 0;
         for(int i = 0; i < 0x100000; i++) {
             if (!key_dist[i]) {
 //                printf("%d %d %d\n", i, key_offset[i], key_dist[i]);
@@ -246,22 +246,22 @@ assert(t == 128); // todo why
     uint32_t counts[4] = {0,0,0,0};
     uint8_t *d = &dest[0];
     line_offsets.clear();
-    for(uint y=0; y < h; y+=2) {
+    for(uint32_t y=0; y < h; y+=2) {
         uint8_t *base = &source[y * w * 3];
         uint8_t *base2 = base + w * 3;
         line_offsets.push_back(d - &dest[0]);
 
-        for(uint x = 0; x < w; x+= 2) {
-            uint rmin = std::min({base[0], base[3], base2[0], base2[3]});
-            uint gmin = std::min({base[1], base[4], base2[1], base2[4]});
-            uint bmin = std::min({base[2], base[5], base2[2], base2[5]});
-            uint rkey = get_key(rmin, base[0], base[3], base2[0], base2[3]);
+        for(uint32_t x = 0; x < w; x+= 2) {
+            uint32_t rmin = std::min({base[0], base[3], base2[0], base2[3]});
+            uint32_t gmin = std::min({base[1], base[4], base2[1], base2[4]});
+            uint32_t bmin = std::min({base[2], base[5], base2[2], base2[5]});
+            uint32_t rkey = get_key(rmin, base[0], base[3], base2[0], base2[3]);
             uint16_t rdist = key_dist[rkey];
             uint8_t rval = key_lookup[rkey];
-            uint gkey =  get_key(gmin, base[1], base[4], base2[1], base2[4]);
+            uint32_t gkey =  get_key(gmin, base[1], base[4], base2[1], base2[4]);
             uint16_t gdist = key_dist[gkey];
             uint8_t gval = key_lookup[gkey];
-            uint bkey =  get_key(bmin, base[2], base[5], base2[2], base2[5]);
+            uint32_t bkey =  get_key(bmin, base[2], base[5], base2[2], base2[5]);
             uint16_t bdist = key_dist[bkey];
             uint8_t bval = key_lookup[bkey];
             uint16_t dist = MAX(rdist, MAX(gdist, bdist));
@@ -370,7 +370,7 @@ assert(t == 128); // todo why
 }
 
 #else
-bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char> &source, std::vector<unsigned char> &dest, std::vector<uint32_t> &line_offsets, uint max_rdist, uint max_gdist, uint max_bdist, uint extra_line_words = 0)
+bool compress_image(const char *name, uint32_t w, uint32_t h, std::vector<unsigned char> &source, std::vector<unsigned char> &dest, std::vector<uint32_t> &line_offsets, uint32_t max_rdist, uint32_t max_gdist, uint32_t max_bdist, uint32_t extra_line_words = 0)
 {
     bool use_56bit_raw = true;
 
@@ -392,21 +392,21 @@ bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char>
             key_dist[sorted_keys[i]] = 0;
             for(int o = -3; o < 3; o++) { // todo really?
 //                for(int o=0;o<1;o++) {
-                uint da = (sorted_keys[i] >> (5u * 3u)) & 0x1f;
-                uint db = (sorted_keys[i] >> (5u * 2u)) & 0x1f;
-                uint dc = (sorted_keys[i] >> (5u * 1u)) & 0x1f;
-                uint dd = (sorted_keys[i] >> (5u * 0u)) & 0x1f;
+                uint32_t da = (sorted_keys[i] >> (5u * 3u)) & 0x1f;
+                uint32_t db = (sorted_keys[i] >> (5u * 2u)) & 0x1f;
+                uint32_t dc = (sorted_keys[i] >> (5u * 1u)) & 0x1f;
+                uint32_t dd = (sorted_keys[i] >> (5u * 0u)) & 0x1f;
 //                if (da == db && db == dc & dc == dd && (o == da || o == -da)) continue;
-                for(uint a = 0; a < 32; a++)
+                for(uint32_t a = 0; a < 32; a++)
                 {
-                    for(uint b = 0; b < 32; b++)
+                    for(uint32_t b = 0; b < 32; b++)
                     {
-                        for(uint c = 0; c < 32; c++)
+                        for(uint32_t c = 0; c < 32; c++)
                         {
-                            for(uint d = 0; d < 32; d++)
+                            for(uint32_t d = 0; d < 32; d++)
                             {
-                                uint j = (a << (5u * 3u)) | (b << (5u * 2u)) | (c << (5u * 1u) | (d << (5u * 0u)));
-                                uint score = (a + o - da) * (a + o - da);
+                                uint32_t j = (a << (5u * 3u)) | (b << (5u * 2u)) | (c << (5u * 1u) | (d << (5u * 0u)));
+                                uint32_t score = (a + o - da) * (a + o - da);
                                 score += (b + o - db) * (b + o - db);
                                 score += (c + o - dc) * (c + o - dc);
                                 score += (d + o - dd) * (d + o - dd);
@@ -433,7 +433,7 @@ bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char>
         {
             assert(key_dist[sorted_keys[i]] == 0);
         }
-        uint t = 0;
+        uint32_t t = 0;
         for(int i = 0; i < 0x100000; i++) {
             if (!key_dist[i]) {
 //                printf("%d %d %d\n", i, key_offset[i], key_dist[i]);
@@ -449,22 +449,22 @@ bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char>
     uint32_t counts[4] = {0,0,0,0};
     uint8_t *d = &dest[0];
     line_offsets.clear();
-    for(uint y=0; y < h; y+=2) {
+    for(uint32_t y=0; y < h; y+=2) {
         uint8_t *base = &source[y * w * 3];
         uint8_t *base2 = base + w * 3;
         line_offsets.push_back(d - &dest[0]);
 
-        for(uint x = 0; x < w; x+= 2) {
-            uint rmin = std::min({base[0], base[3], base2[0], base2[3]});
-            uint gmin = std::min({base[1], base[4], base2[1], base2[4]});
-            uint bmin = std::min({base[2], base[5], base2[2], base2[5]});
-            uint rkey = get_key(rmin, base[0], base[3], base2[0], base2[3]);
+        for(uint32_t x = 0; x < w; x+= 2) {
+            uint32_t rmin = std::min({base[0], base[3], base2[0], base2[3]});
+            uint32_t gmin = std::min({base[1], base[4], base2[1], base2[4]});
+            uint32_t bmin = std::min({base[2], base[5], base2[2], base2[5]});
+            uint32_t rkey = get_key(rmin, base[0], base[3], base2[0], base2[3]);
             uint16_t rdist = key_dist[rkey];
             uint8_t rval = key_lookup[rkey];
-            uint gkey =  get_key(gmin, base[1], base[4], base2[1], base2[4]);
+            uint32_t gkey =  get_key(gmin, base[1], base[4], base2[1], base2[4]);
             uint16_t gdist = key_dist[gkey];
             uint8_t gval = key_lookup[gkey];
-            uint bkey =  get_key(bmin, base[2], base[5], base2[2], base2[5]);
+            uint32_t bkey =  get_key(bmin, base[2], base[5], base2[2], base2[5]);
             uint16_t bdist = key_dist[bkey];
             uint8_t bval = key_lookup[bkey];
             uint16_t dist = std::max({rdist, gdist, bdist});
@@ -570,7 +570,7 @@ bool compress_image(const char *name, uint w, uint h, std::vector<unsigned char>
 
 #endif
 
-void write_hword(uint word, FILE *out) {
+void write_hword(uint32_t word, FILE *out) {
     assert(word < 0x10000);
     fputc(word & 0xff, out);
     fputc(word >> 8, out);
@@ -582,7 +582,7 @@ uint32_t pad_sector(uint32_t sector_offset, FILE *out) {
     return 0;
 }
 
-uint8_t to_bcd(uint x) {
+uint8_t to_bcd(uint32_t x) {
     assert(x<100);
     return (x/10)*16 + (x%10);
 }
@@ -624,13 +624,13 @@ int encode_movie(const char *filename, const char *audio_filename, const char *f
     total_vals = 0;
 
 #ifdef ADD_EOR_DEBUGGING
-    uint extra_line_words = 1;
+    uint32_t extra_line_words = 1;
 #else
-    uint extra_line_words = 0;
+    uint32_t extra_line_words = 0;
 #endif
     unsigned error;
-    uint w = 320;
-    uint h = 240;
+    uint32_t w = 320;
+    uint32_t h = 240;
     assert(!(h&1));
     size_t size3 = w * h * 3;
     size_t size2 = w * h * 2;
@@ -762,9 +762,9 @@ int encode_movie(const char *filename, const char *audio_filename, const char *f
             fwrite(&header, 1, sizeof(header), file_out);
             sector_offset += sizeof(header);
             // note there is one extra for the end
-            for(uint y = 0; y <= h / 2; y++)
+            for(uint32_t y = 0; y <= h / 2; y++)
             {
-                uint off = line_offsets[y];
+                uint32_t off = line_offsets[y];
                 assert(!(3u & off));
                 off >>= 2;
                 write_hword(off, file_out);
@@ -777,7 +777,7 @@ int encode_movie(const char *filename, const char *audio_filename, const char *f
                 assert(header.audio_words * 30 * 4 ==
                        2 * header.audio_channels * header.audio_freq); // make sure we divide correctly
                 uint32_t buf[header.audio_words];
-                uint audio_size_bytes = header.audio_words * 4;
+                uint32_t audio_size_bytes = header.audio_words * 4;
                 fseek(audio_file, audio_size_bytes * (size_t) i, SEEK_SET);
                 if (1 != fread(buf, audio_size_bytes, 1, audio_file)) {
                     fprintf(stderr, "Error reading audio for frame %d\n", i);
