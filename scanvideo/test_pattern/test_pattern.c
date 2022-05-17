@@ -58,19 +58,18 @@ int main(void) {
 void draw_color_bar(scanvideo_scanline_buffer_t *buffer) {
     // figure out 1/32 of the color value
     uint line_num = scanvideo_scanline_number(buffer->scanline_id);
-    int32_t color_step = 1 + (line_num * 7 / vga_mode.height);
-    color_step = PICO_SCANVIDEO_PIXEL_FROM_RGB5(color_step & 1u, (color_step >> 1u) & 1u, (color_step >> 2u) & 1u);
-    if (invert) color_step = -color_step;
+    uint32_t primary_color = 1u + (line_num * 7 / vga_mode.height);
+    uint32_t color_mask = PICO_SCANVIDEO_PIXEL_FROM_RGB5(0x1f * (primary_color & 1u), 0x1f * ((primary_color >> 1u) & 1u), 0x1f * ((primary_color >> 2u) & 1u));
     uint bar_width = vga_mode.width / 32;
 
     uint16_t *p = (uint16_t *) buffer->data;
-    int32_t color = invert ? PICO_SCANVIDEO_PIXEL_FROM_RGB8(255, 255, 255) : 0;
 
+    uint32_t invert_bits = invert ? PICO_SCANVIDEO_PIXEL_FROM_RGB5(0x1f,0x1f,0x1f) : 0;
     for (uint bar = 0; bar < 32; bar++) {
         *p++ = COMPOSABLE_COLOR_RUN;
-        *p++ = color;
+        uint32_t color = PICO_SCANVIDEO_PIXEL_FROM_RGB5(bar, bar, bar);
+        *p++ = (color & color_mask) ^ invert_bits;
         *p++ = bar_width - 3;
-        color += color_step;
     }
 
     // 32 * 3, so we should be word aligned

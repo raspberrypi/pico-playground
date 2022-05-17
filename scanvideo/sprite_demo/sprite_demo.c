@@ -176,7 +176,7 @@ int main(void) {
     sleep_ms(10);
     set_sys_clock_khz(400000, true);
 #else
-#if PICO_SCANVIDEO_48MHz
+#if PICO_SCANVIDEO_48MHZ
     set_sys_clock_khz(192000, true);
 #else
     set_sys_clock_khz(200000, true);

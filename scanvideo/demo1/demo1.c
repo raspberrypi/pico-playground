@@ -602,7 +602,7 @@ int main(void) {
 
     gpio_put(27, 0);
 #if PICO_ON_DEVICE && !PICO_ON_FPGA
-#if PICO_SCANVIDEO_48MHz
+#if PICO_SCANVIDEO_48MHZ
     /* set to double frequency 48Mhz for some examples which were written for a higher clock speed */
     set_sys_clock_khz(96000, true);
 #endif

@@ -665,7 +665,7 @@ void go_core1(void (*execute)()) {
 }
 
 int main(void) {
-#if PICO_SCANVIDEO_48MHz
+#if PICO_SCANVIDEO_48MHZ
     set_sys_clock_48mhz();
 #endif
     setup_default_uart();
