@@ -47,7 +47,7 @@ Name|Screenshot|Description
 [textmode](scanvideo/textmode)|![](scanvideo/textmode/screenshot.jpg)| Shows off chained DMA to generate scanlines out of glyph fragments via DMA/PIO
 
 The above are intended to be used with the VGA demo board as described in [Hardware Design with RP2040](https://rptl.io/rp2040-design) however it is possible to wire your own VGA output according to the following schematic:
-![](scanvideo/Raspberry Pi Pico to VGA Connection Schematic.png)
+![](scanvideo/Raspberry%20Pi%20Pico%20to%20VGA%20Connection%20Schematic.png)
 
 ## Sleep
 
