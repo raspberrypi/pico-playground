@@ -133,9 +133,13 @@ void __time_critical_func(render_scanline)(struct scanvideo_scanline_buffer *des
 }
 
 int main(void) {
+#ifdef TURBO_BOOST
+    set_sys_clock_khz(300000, true);
+#else
     set_sys_clock_khz(200000, true);
+#endif
     setup_default_uart();
-
+    
 #ifdef PICO_SMPS_MODE_PIN
     gpio_init(PICO_SMPS_MODE_PIN);
     gpio_set_dir(PICO_SMPS_MODE_PIN, GPIO_OUT);
