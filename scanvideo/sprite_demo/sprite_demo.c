@@ -21,12 +21,12 @@
 #include "raspberry_128x128_bgar5515.h"
 #include "raspberry_128x128_bgar5515_flip.h"
 
-#include "hardware/structs/vreg_and_chip_reset.h"
+#include "hardware/vreg.h"
 
 //#define VGA_MODE vga_mode_320x240_60
 #define VGA_MODE vga_mode_640x480_60
 #define DUAL_CORE_RENDER
-// #define TURBO_BOOST
+// #define TURBO_BOOST 1
 #define N_BERRIES 45
 
 CU_REGISTER_DEBUG_PINS(generation)
@@ -171,8 +171,8 @@ void __time_critical_func(frame_update_logic)() {
 }
 
 int main(void) {
-#ifdef TURBO_BOOST
-    hw_set_bits(&mm_vreg_and_chip_reset->vreg, VREG_AND_CHIP_RESET_VREG_VSEL_BITS);
+#if TURBO_BOOST
+    vreg_set_voltage(VREG_VOLTAGE_MAX);
     sleep_ms(10);
     set_sys_clock_khz(400000, true);
 #else

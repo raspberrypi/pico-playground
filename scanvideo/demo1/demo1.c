@@ -393,7 +393,7 @@ volatile uint32_t scanline_color = 0;
 
 int vga_main(void) {
     mutex_init(&frame_logic_mutex);
-    gpio_debug_pins_init();
+//    gpio_debug_pins_init();
 
     gpio_init(24);
     gpio_init(22);
@@ -597,7 +597,6 @@ bool render_scanline_test_pattern(struct scanvideo_scanline_buffer *dest, int co
     return true;
 }
 
-//#include "hardware/structs/vreg_and_chip_reset.h"
 int main(void) {
 
     gpio_put(27, 0);

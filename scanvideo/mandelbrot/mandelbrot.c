@@ -274,7 +274,7 @@ int main(void) {
     base_freq = 50000;
 #endif
 #if PICO_ON_DEVICE
-#ifdef TURBO_BOOST
+#if TURBO_BOOST
     vreg_set_voltage(VREG_VOLTAGE_1_30);
     sleep_ms(10);
     set_sys_clock_khz(base_freq*6, true);

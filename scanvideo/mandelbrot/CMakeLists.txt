@@ -5,7 +5,7 @@ if (TARGET pico_scanvideo_dpi)
 
     target_compile_definitions(mandelbrot PRIVATE
             PICO_SCANVIDEO_PLANE1_VARIABLE_FRAGMENT_DMA=1
-            #TURBO_BOOST
+            #TURBO_BOOST=1
             )
     target_link_libraries(mandelbrot PRIVATE
             pico_stdlib
