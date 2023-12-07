@@ -10,5 +10,5 @@ if (TARGET hardware_reset)
     pico_add_extra_outputs(hello_reset)
 
     # add url via pico_set_program_url
-    example_auto_set_url(hello_reset)
+    playground_auto_set_url(hello_reset)
 endif ()
