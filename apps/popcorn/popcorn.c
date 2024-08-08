@@ -22,6 +22,7 @@
 #include "pico/sd_card.h"
 #include "hardware/divider.h"
 #include "hardware/irq.h"
+#include "hardware/clocks.h"
 #include "platypus.h"
 #include "font.h"
 
@@ -698,7 +699,7 @@ static void __time_critical_func(handle_audio_buffer_ready)(const struct frame_h
 
 static void __time_critical_func(handle_need_frame_header_sector)(struct frame_header *head) {
     head->mark0 = 0; // mark as invalid
-    popcorn_debug("starting scatter read %d\n", (uint) vs.sector_num);
+    popcorn_debug("starting scatter read %d\n", (uint) head->sector_number);
     const int sector_count = 1;
     assert(sector_count <= PICO_SD_MAX_BLOCK_COUNT);
     uint32_t *p = scatter;

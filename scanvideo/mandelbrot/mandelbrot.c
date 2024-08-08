@@ -25,16 +25,29 @@ CU_REGISTER_DEBUG_PINS(generation)
 
 #define vga_mode vga_mode_320x240_60
 
+#if PICO_RISCV
+// seems to be an issue with IRQ timing so moving onto core 1 for now
+#define ALARM_POOL_ON_CORE1 1
+#endif
+
+#ifndef USE_FLOAT
+#if PICO_RP2350 && !PICO_RISCV
+#define USE_FLOAT 1 // fastest
+#endif
+#endif
 //#define USE_FLOAT 1
 
 #if USE_FLOAT
-//typedef float fixed;
-typedef double fixed;
+typedef float fixed;
+//typedef double fixed;
 static inline fixed float_to_fixed(float x) {
     return x;
 }
 static inline fixed fixed_mult(fixed a, fixed b) {
     return a*b;
+}
+static inline fixed double_to_fixed(double x) {
+    return (fixed)x;
 }
 #else
 #define FRAC_BITS 25u
@@ -44,7 +57,11 @@ static inline fixed float_to_fixed(float x) {
     return (fixed) (x * (float) (1u << FRAC_BITS));
 }
 
-#if !PICO_ON_DEVICE || (FRAC_BITS != 25)
+static inline fixed double_to_fixed(double x) {
+    return (fixed) (x * (double) (1u << FRAC_BITS));
+}
+
+#if !PICO_ON_DEVICE || (FRAC_BITS != 25) || defined(__riscv)
 static inline fixed fixed_mult(fixed a, fixed b) {
     int64_t r = ((int64_t) a) * b;
     return (int32_t) (r >> FRAC_BITS);
@@ -52,6 +69,7 @@ static inline fixed fixed_mult(fixed a, fixed b) {
 #else
 // Since we're trying to go fast, do a better multiply of 32x32 preserving the bits we want
 static inline fixed fixed_mult(fixed a, fixed b) {
+#if __ARM_ARCH_6M__
     uint32_t tmp1, tmp2, tmp3;
     __asm__ volatile (
     ".syntax unified\n"
@@ -74,6 +92,9 @@ static inline fixed fixed_mult(fixed a, fixed b) {
     :
     );
     return a;
+#else
+    return (fixed) ((((uint64_t)a) * b) >> FRAC_BITS);
+#endif
 }
 #endif
 
@@ -90,7 +111,6 @@ static fixed x0, y0;
 static fixed dx0_dx, dy0_dy;
 static fixed max;
 static bool params_ready;
-
 
 static uint16_t framebuffer[320 * 240];
 //static uint16_t *framebuffer;
@@ -215,6 +235,14 @@ struct semaphore video_setup_complete;
 
 void core1_func() {
     sem_acquire_blocking(&video_setup_complete);
+    printf("CORE 1 go\n");
+#if ALARM_POOL_ON_CORE1
+#if PICO_ON_DEVICE
+
+    alarm_pool_add_alarm_in_us(alarm_pool_create(0, 3), 100, timer_callback, NULL, true);
+#endif
+#endif
+
     render_loop();
 }
 
@@ -233,8 +261,10 @@ int vga_main(void) {
     frame_update_logic();
     sem_release(&video_setup_complete);
 
+#if !ALARM_POOL_ON_CORE1
 #if PICO_ON_DEVICE
     add_alarm_in_us(100, timer_callback, NULL, true);
+#endif
 #endif
     render_loop();
     return 0;
@@ -252,16 +282,16 @@ static inline void raw_scanline_finish(struct scanvideo_scanline_buffer *dest) {
 
 void __time_critical_func(frame_update_logic)() {
     if (!params_ready) {
-        float scale = vga_mode.height / 2;
+        double scale = vga_mode.height / 2;
         static int foo;
-        float offx = (MIN(foo, 200)) / 500.0f;
-        float offy = -(MIN(foo, 230)) / 250.0f;
-        scale *= (10000 + (foo++) * (float) foo) / 10000.0f;
-        x0 = float_to_fixed(offx + (-vga_mode.width / 2) / scale - 0.5f);
-        y0 = float_to_fixed(offy + (-vga_mode.height / 2) / scale);
-        dx0_dx = float_to_fixed(1.0f / scale);
-        dy0_dy = float_to_fixed(1.0f / scale);
-        max = float_to_fixed(4.f);
+        double offx = (MIN(foo, 196.7)) / 500.0;
+        double offy = -(MIN(foo, 229)) / 250.0;
+        scale *= (10000 + (foo++) * (double) foo) / 10000.0;
+        x0 = double_to_fixed(offx + (-vga_mode.width / 2) / scale - 0.5);
+        y0 = double_to_fixed(offy + (-vga_mode.height / 2) / scale);
+        dx0_dx = double_to_fixed(1.0f / scale);
+        dy0_dy = double_to_fixed(1.0f / scale);
+        max = double_to_fixed(4.f);
         params_ready = true;
     }
 }

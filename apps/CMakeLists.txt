@@ -1,2 +1,2 @@
-add_subdirectory(popcorn)
-add_subdirectory(usb_sound_card)
+add_subdirectory_exclude_platforms(popcorn "rp2350-riscv")
+add_subdirectory_exclude_platforms(usb_sound_card)

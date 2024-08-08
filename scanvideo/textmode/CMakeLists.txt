@@ -12,6 +12,7 @@ if (TARGET pico_scanvideo_dpi)
     target_compile_definitions(textmode PRIVATE
             PICO_SCANVIDEO_SCANLINE_BUFFER_COUNT=4
             PICO_SCANVIDEO_PLANE1_FIXED_FRAGMENT_DMA=true
+            PICO_SCANVIDEO_MAX_SCANLINE_BUFFER_WORDS=250 # room for more characters
     )
 
     target_link_libraries(textmode PRIVATE
@@ -20,4 +21,10 @@ if (TARGET pico_scanvideo_dpi)
             pico_scanvideo_dpi
             render)
     pico_add_extra_outputs(textmode)
+
+    if (PICO_RP2350)
+        target_compile_definitions(textmode PRIVATE
+                PICO_USE_SW_SPIN_LOCKS=0
+        )
+    endif()
 endif()

@@ -32,19 +32,20 @@ is useful when you only have 264K of RAM).
 
 For a fuller description of scanout video see [here](https://github.com/raspberrypi/pico-extras/blob/master/src/common/pico_scanvideo/README.adoc)
 
-Name|Screenshot|Description
----|---|---
-[demo1](scanvideo/demo1)|![](scanvideo/demo1/screenshot.jpg)| So named because it was the first demo program written that used video.. it is a bit dated now and hails from a time where there was _much_ less RAM on the RP2040
-[flash_stream](scanvideo/flash_stream)|![](scanvideo/flash_stream/screenshot.jpg)| Streams video data out of flash fast enough to drive 640x480x60fps bitmap display
-[hscroll_dma_tiles](scanvideo/hscroll_dma_tiles)|![](scanvideo/hscroll_dma_tiles/screenshot.jpg)| A horizontal scrolling test app which uses a second video plane (PIO) to overlay sprites
-[mandelbrot](scanvideo/mandelbrot)|![](scanvideo/mandelbrot/screenshot.jpg)| A mandelbrot generator using a 320x240x16 framebuffer
-[mario_tiles](scanvideo/mario_tiles)|![](scanvideo/mario_tiles/screenshot.jpg)| Confusingly named as a reference to Super Mario Kart's tiled psuedo-3D rendering. This is similar to [hscroll_dma_tiles](scanvideo/hscroll_dma_tiles) except the whole tiled scrolling area is now rotated and zoomed.
-[scanvideo_minimal](scanvideo/scanvideo_minimal)|![](scanvideo/scanvideo_minimal/screenshot.jpg)| A very basic video output generator which generates a test pattern
-[render](scanvideo/render)| | A very dated rendering library used by [demo1](scanvideo/demo1) - avoid!
-[sprite](scanvideo/sprite)| | A small sprite library used by [sprite_demo](scanvideo/scanvideo_minimal)
-[sprite_demo](scanvideo/sprite_demo)|![](scanvideo/sprite_demo/screenshot.jpg)| Some bouncing Eben heads
-[test_pattern](scanvideo/test_pattern)|![](scanvideo/test_pattern/screenshot.jpg)| Display color bars
-[textmode](scanvideo/textmode)|![](scanvideo/textmode/screenshot.jpg)| Shows off chained DMA to generate scanlines out of glyph fragments via DMA/PIO
+Name| Screenshot                                      |Description
+---|-------------------------------------------------|---
+[demo1](scanvideo/demo1)| ![](scanvideo/demo1/screenshot.jpg)             | So named because it was the first demo program written that used video.. it is a bit dated now and hails from a time where there was _much_ less RAM on the RP2040
+[demo2](scanvideo/demo2)| ![](scanvideo/demo2/screenshot.jpg)             | A little variation on `demo1` for RP2350. Displays a RISC-V logo also; if built for RISC-V the RISC-V logo is in front; if built for Arm, it is behind
+[flash_stream](scanvideo/flash_stream)| ![](scanvideo/flash_stream/screenshot.jpg)      | Streams video data out of flash fast enough to drive 640x480x60fps bitmap display
+[hscroll_dma_tiles](scanvideo/hscroll_dma_tiles)| ![](scanvideo/hscroll_dma_tiles/screenshot.jpg) | A horizontal scrolling test app which uses a second video plane (PIO) to overlay sprites
+[mandelbrot](scanvideo/mandelbrot)| ![](scanvideo/mandelbrot/screenshot.jpg)        | A mandelbrot generator using a 320x240x16 framebuffer
+[mario_tiles](scanvideo/mario_tiles)| ![](scanvideo/mario_tiles/screenshot.jpg)       | Confusingly named as a reference to Super Mario Kart's tiled psuedo-3D rendering. This is similar to [hscroll_dma_tiles](scanvideo/hscroll_dma_tiles) except the whole tiled scrolling area is now rotated and zoomed.
+[scanvideo_minimal](scanvideo/scanvideo_minimal)| ![](scanvideo/scanvideo_minimal/screenshot.jpg) | A very basic video output generator which generates a test pattern
+[render](scanvideo/render)|                                                 | A very dated rendering library used by [demo1](scanvideo/demo1) - avoid!
+[sprite](scanvideo/sprite)|                                                 | A small sprite library used by [sprite_demo](scanvideo/scanvideo_minimal)
+[sprite_demo](scanvideo/sprite_demo)| ![](scanvideo/sprite_demo/screenshot.jpg)       | Some bouncing Eben heads
+[test_pattern](scanvideo/test_pattern)| ![](scanvideo/test_pattern/screenshot.jpg)      | Display color bars
+[textmode](scanvideo/textmode)| ![](scanvideo/textmode/screenshot.jpg)          | Shows off chained DMA to generate scanlines out of glyph fragments via DMA/PIO
 
 The above are intended to be used with the VGA demo board as described in [Hardware Design with RP2040](https://rptl.io/rp2040-design) however it is possible to wire your own VGA output according to the following schematic:
 ![](scanvideo/Raspberry%20Pi%20Pico%20to%20VGA%20Connection%20Schematic.png)

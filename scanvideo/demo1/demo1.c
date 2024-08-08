@@ -411,7 +411,7 @@ int vga_main(void) {
 
     sem_init(&video_setup_complete, 0, 1);
 
-    init_render_state(0);
+    init_render_state(get_core_num());
 
 #ifdef RENDER_ON_CORE1
     init_render_state(1);
@@ -617,6 +617,11 @@ int main(void) {
 
     // Re init uart now that clk_peri has changed
     setup_default_uart();
+#ifdef __riscv
+    printf("This is RISCV\n");
+#else
+    printf("This is ARM\n");
+#endif
 
     return vga_main();
 }

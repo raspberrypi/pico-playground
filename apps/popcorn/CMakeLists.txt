@@ -7,7 +7,7 @@ if (PICO_ON_DEVICE)
                 lcd18.c
                 )
 
-        add_compile_definitions(popcorn
+        target_compile_definitions(popcorn PRIVATE
                 PICO_SCANVIDEO_MAX_SCANLINE_BUFFER_WORDS=164
                 # seems fine without 16 (maybe need for overlay)
                 PICO_SCANVIDEO_SCANLINE_BUFFER_COUNT=16
@@ -28,6 +28,12 @@ if (PICO_ON_DEVICE)
                 #PICO_SCANVIDEO_48MHZ # still uses this for now
                 )
 
+        if (PICO_RP2350)
+            target_compile_definitions(popcorn PRIVATE
+                    #PICO_SCANVIDEO_48MHZ=1
+                    PLATYPUS_TABLES_MAIN_RAM=1 #todo not enough space in scratch (we can fixup tables tho later)
+                    )
+        endif()
         target_link_libraries(popcorn
                 pico_multicore
                 pico_stdlib

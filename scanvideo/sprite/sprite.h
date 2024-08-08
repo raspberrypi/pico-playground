@@ -7,7 +7,7 @@
 #ifndef _SPRITE_H
 #define _SPRITE_H
 
-#include "pico/types.h"
+#include "pico.h"
 #include "affine_transform.h"
 
 typedef struct sprite {

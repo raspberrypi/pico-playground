@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <cassert>
+#include <cstddef>
 #include <algorithm>
 #include <map>
 #include <set>

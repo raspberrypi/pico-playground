@@ -14,6 +14,9 @@
 #include "pico/multicore.h"
 #include "spans.h"
 #include "data.h"
+#if PICO_ON_DEVICE
+#include "hardware/clocks.h"
+#endif
 
 CU_REGISTER_DEBUG_PINS(frame_gen)
 

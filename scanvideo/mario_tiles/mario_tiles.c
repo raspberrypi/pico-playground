@@ -15,6 +15,7 @@
 #include "data.h"
 #if PICO_ON_DEVICE
 #include "hardware/interp.h"
+#include "hardware/clocks.h"
 #endif
 
 CU_REGISTER_DEBUG_PINS(frame_gen)

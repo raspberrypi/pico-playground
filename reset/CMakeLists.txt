@@ -1,1 +1,1 @@
-add_subdirectory(hello_reset)
+add_subdirectory_exclude_platforms(hello_reset)

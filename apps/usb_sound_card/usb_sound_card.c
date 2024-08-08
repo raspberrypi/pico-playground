@@ -11,6 +11,7 @@
 #include "pico/audio.h"
 #include "pico/audio_i2s.h"
 #include "pico/multicore.h"
+#include "hardware/clocks.h"
 #include "lufa/AudioClassCommon.h"
 
 // todo forget why this is using core 1 for sound: presumably not necessary

@@ -18,9 +18,8 @@
 #define FRAGMENT_WORDS 4
 
 #if PICO_ON_DEVICE
-
+#include "hardware/clocks.h"
 #include "hardware/structs/bus_ctrl.h"
-
 #endif
 
 CU_REGISTER_DEBUG_PINS(frame_gen)
@@ -112,7 +111,7 @@ void render_loop() {
 //                hspeed = -hspeed;
 //            }
             uint8_t new_input = gpio_get(input_pin0);
-            if (last_input && !new_input) {
+            if ((last_input && !new_input) || getchar_timeout_us(0) == ' ') {
                 static int foo = 1;
                 foo++;
 #if PICO_ON_DEVICE
@@ -406,7 +405,11 @@ bool render_scanline_bg(struct scanvideo_scanline_buffer *dest, int core) {
 #undef COUNT
     // todo for SOME REASON, 80 is the max we can do without starting to really get bus delays (even with priority)... not sure how this could be
     // todo actually it seems it can work, it just mostly starts incorrectly synced!?
+#if PICO_RP2040
 #define COUNT MIN(vga_mode.width/(FRAGMENT_WORDS*2)-1, 80)//MAX_SCANLINE_BUFFER_WORDS / 2 - 2)
+#else
+#define COUNT MIN(vga_mode.width/(FRAGMENT_WORDS*2)-1, (PICO_SCANVIDEO_MAX_SCANLINE_BUFFER_WORDS / 2 - 2))
+#endif
 //#undef COUNT
 //#define COUNT 79
     // we need to take up 5 words, since we have fixed width

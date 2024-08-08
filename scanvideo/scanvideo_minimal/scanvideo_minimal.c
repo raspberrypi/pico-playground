@@ -12,6 +12,9 @@
 #include "pico/multicore.h"
 #include "pico/sync.h"
 #include "pico/stdlib.h"
+#if PICO_ON_DEVICE
+#include "hardware/clocks.h"
+#endif
 
 #define DUAL_CORE_RENDER
 #define VGA_MODE vga_mode_320x240_60
