@@ -6,7 +6,7 @@ To build the converter, either do a `PICO_PLATFORM=host` build of pico-playgroun
 or from this directory just do
 
 ```bash
-mkidr build
+mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
