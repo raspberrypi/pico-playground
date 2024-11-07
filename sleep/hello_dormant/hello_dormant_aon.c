@@ -42,7 +42,7 @@ static void aon_sleep(void) {
 
     // Go to sleep for 10 seconds, with RTC running off GP20
     // The external clock is the RTC of another pico being fed to GP20
-    sleep_goto_aon_dormant_until(&ts, &sleep_callback);
+    sleep_goto_dormant_until(&ts, &sleep_callback);
 }
 
 int main() {
@@ -66,7 +66,7 @@ int main() {
         sleep_run_from_xosc();
 #else
         printf("Switching to LPSC\n");
-        sleep_run_from_lpsc();
+        sleep_run_from_lposc();
 #endif
 
         uart_default_tx_wait_blocking();

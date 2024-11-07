@@ -41,9 +41,7 @@ int main() {
         printf("Sleeping for 10 seconds\n");
         uart_default_tx_wait_blocking();
 
-        int alarm_id = -1;
-        sleep_goto_sleep_for(10000, &alarm_sleep_callback, &alarm_id);
-        if (alarm_id >= 0) {
+        if (sleep_goto_sleep_for(10000, &alarm_sleep_callback)) {
             // Make sure we don't wake
             while (!awake) {
                 printf("Should be sleeping\n");

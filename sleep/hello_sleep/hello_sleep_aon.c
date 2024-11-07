@@ -28,7 +28,7 @@ static void aon_sleep(void) {
     uart_default_tx_wait_blocking();
 
     // Go to sleep
-    sleep_goto_aon_sleep_until(&ts, &sleep_callback);
+    sleep_goto_sleep_until(&ts, &sleep_callback);
 }
 
 int main() {
