@@ -17,6 +17,17 @@
 // todo forget why this is using core 1 for sound: presumably not necessary
 // todo noop when muted
 
+// modification for USB-sound rate feedback and mute
+#define USB_FEEDBACK 1 // USB-audio rate feedback using buffer status
+#define MUTE_CMD 1 // mute command
+
+// connected pins from RPi to DAC
+#undef PICO_AUDIO_I2S_DATA_PIN
+#define PICO_AUDIO_I2S_DATA_PIN 26
+#undef PICO_AUDIO_I2S_CLOCK_PIN_BASE
+#define PICO_AUDIO_I2S_CLOCK_PIN_BASE 27
+////////////////////////////////////////
+
 CU_REGISTER_DEBUG_PINS(audio_timing)
 
 // ---- select at most one ---
@@ -40,7 +51,12 @@ static char *descriptor_strings[] =
 #undef AUDIO_SAMPLE_FREQ
 #define AUDIO_SAMPLE_FREQ(frq) (uint8_t)(frq), (uint8_t)((frq >> 8)), (uint8_t)((frq >> 16))
 
+#if USB_FEEDBACK
+// when USB-audio feedback applies, it receives upto 49 samples in each packet
+#define AUDIO_MAX_PACKET_SIZE(freq) (uint8_t)(((freq + 1999) / 1000) * 4)
+#else
 #define AUDIO_MAX_PACKET_SIZE(freq) (uint8_t)(((freq + 999) / 1000) * 4)
+#endif
 #define FEATURE_MUTE_CONTROL 1u
 #define FEATURE_VOLUME_CONTROL 2u
 
@@ -256,6 +272,22 @@ static struct {
 
 static struct audio_buffer_pool *producer_pool;
 
+#if USB_FEEDBACK
+#define BUFFER_NUM 16 // number of buffer
+
+//for USB-audio rate feedback, number of vacant buffers is used
+static int countFreeBuffers(void) {
+  int i = 0;
+  
+  audio_buffer_t *audio_buffer = producer_pool->free_list;
+  while(audio_buffer != NULL) {
+    audio_buffer = audio_buffer->next;
+    i++;
+  }
+  return i;
+}
+#endif
+
 static void _as_audio_packet(struct usb_endpoint *ep) {
     assert(ep->current_transfer);
     struct usb_buffer *usb_buffer = usb_current_out_packet_buffer(ep);
@@ -268,6 +300,11 @@ static void _as_audio_packet(struct usb_endpoint *ep) {
     assert(audio_buffer->sample_count);
     assert(audio_buffer->max_sample_count >= audio_buffer->sample_count);
     uint16_t vol_mul = audio_state.vol_mul;
+#if MUTE_CMD
+    if(audio_state.mute) {
+      vol_mul = 1;
+    }
+#endif
     int16_t *out = (int16_t *) audio_buffer->buffer->bytes;
     int16_t *in = (int16_t *) usb_buffer->data;
     for (int i = 0; i < audio_buffer->sample_count * 2; i++) {
@@ -288,8 +325,14 @@ static void _as_sync_packet(struct usb_endpoint *ep) {
     assert(buffer->data_max >= 3);
     buffer->data_len = 3;
 
+#if USB_FEEDBACK
+    // calc rate adjustment value between -40 to 40
+    int feedbackvalue = (countFreeBuffers() - BUFFER_NUM / 2) * (2 * 40 / BUFFER_NUM);
+    uint feedback = ((audio_state.freq + feedbackvalue) << 14u) / 1000u;
+#else
     // todo lie thru our teeth for now
     uint feedback = (audio_state.freq << 14u) / 1000u;
+#endif
 
     buffer->data[0] = feedback;
     buffer->data[1] = feedback >> 8u;
@@ -613,7 +656,12 @@ int main(void) {
             .sample_stride = 4
     };
 
+#if USB_FEEDBACK
+    // when USB-audio feedback applies, it receives upto 49 samples in each packet
+    producer_pool = audio_new_producer_pool(&producer_format, BUFFER_NUM, 48 + 1);
+#else
     producer_pool = audio_new_producer_pool(&producer_format, 8, 48); // todo correct size
+#endif    
     bool __unused ok;
     struct audio_i2s_config config = {
             .data_pin = PICO_AUDIO_I2S_DATA_PIN,
