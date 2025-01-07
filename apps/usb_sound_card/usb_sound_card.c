@@ -20,12 +20,6 @@
 // modification for USB-sound rate feedback and mute
 #define USB_FEEDBACK 1 // USB-audio rate feedback using buffer status
 #define MUTE_CMD 1 // mute command
-
-// connected pins from RPi to DAC
-#undef PICO_AUDIO_I2S_DATA_PIN
-#define PICO_AUDIO_I2S_DATA_PIN 26
-#undef PICO_AUDIO_I2S_CLOCK_PIN_BASE
-#define PICO_AUDIO_I2S_CLOCK_PIN_BASE 27
 ////////////////////////////////////////
 
 CU_REGISTER_DEBUG_PINS(audio_timing)
@@ -658,7 +652,8 @@ int main(void) {
 
 #if USB_FEEDBACK
     // when USB-audio feedback applies, it receives upto 49 samples in each packet
-    producer_pool = audio_new_producer_pool(&producer_format, BUFFER_NUM, 48 + 1);
+    producer_pool = audio_new_producer_pool(&producer_format, BUFFER_NUM,
+					    AUDIO_MAX_PACKET_SIZE(AUDIO_FREQ_MAX) / 4);
 #else
     producer_pool = audio_new_producer_pool(&producer_format, 8, 48); // todo correct size
 #endif    
@@ -676,7 +671,14 @@ int main(void) {
         panic("PicoAudio: Unable to open audio device.\n");
     }
 
+#if USB_FEEDBACK
+    // It is not clear what is meant by the number "96" but I fixed it as well as producer_pool.
+    // ok = audio_i2s_connect_extra(producer_pool, false, 2, 96, NULL);
+    ok = audio_i2s_connect_extra(producer_pool, false, 2,
+				 AUDIO_MAX_PACKET_SIZE(AUDIO_FREQ_MAX) / 2, NULL);
+#else
     ok = audio_i2s_connect_extra(producer_pool, false, 2, 96, NULL);
+#endif
     assert(ok);
     usb_sound_card_init();
 
