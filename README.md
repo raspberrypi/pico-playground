@@ -68,3 +68,14 @@ even though it is in the Pico SDK
 Name|Description
 ---|---
 [stdio_pio](stdio/pio)| Demonstrates adding a custom STDIO driver using a PIO UART
+
+## WiFi
+
+Example using the wifi\_settings\_connect library to connect to
+a WiFi hotspot. The library provides a way to store WiFi hotspot
+details in Flash and connect automatically, avoiding the need to
+specify build-time flags such as `WIFI_SSID` and `WIFI_PASSWORD`.
+
+Name|Description
+---|---
+[wifi\_settings\_connect\_example](wifi_settings_connect/example)| Demonstrates connecting to a hotspot and sending UDP broadcasts
