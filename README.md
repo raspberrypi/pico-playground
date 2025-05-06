@@ -68,3 +68,11 @@ even though it is in the Pico SDK
 Name|Description
 ---|---
 [stdio_pio](stdio/pio)| Demonstrates adding a custom STDIO driver using a PIO UART
+
+## WiFi
+
+Example using the wifi\_settings\_connect library from pico\_extras.
+
+Name|Description
+---|---
+[wifi\_settings\_connect\_example](wifi_settings_connect/example)| Demonstrates connecting to WiFi hotspots and sending UDP broadcasts
