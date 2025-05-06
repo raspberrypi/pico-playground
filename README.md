@@ -71,11 +71,8 @@ Name|Description
 
 ## WiFi
 
-Example using the wifi\_settings\_connect library to connect to
-a WiFi hotspot. The library provides a way to store WiFi hotspot
-details in Flash and connect automatically, avoiding the need to
-specify build-time flags such as `WIFI_SSID` and `WIFI_PASSWORD`.
+Example using the wifi\_settings\_connect library from pico\_extras.
 
 Name|Description
 ---|---
-[wifi\_settings\_connect\_example](wifi_settings_connect/example)| Demonstrates connecting to a hotspot and sending UDP broadcasts
+[wifi\_settings\_connect\_example](wifi_settings_connect/example)| Demonstrates connecting to WiFi hotspots and sending UDP broadcasts
