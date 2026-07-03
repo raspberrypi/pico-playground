@@ -4,7 +4,6 @@ if (TARGET pico_scanvideo_dpi)
     if (PICO_RP2350)
         target_compile_definitions(demo2 PRIVATE
                 #PICO_SCANVIDEO_48MHZ=1
-                PICO_USE_SW_SPIN_LOCKS=0
                 PICO_SCANVIDEO_SCANLINE_BUFFER_COUNT=16 # a few extra for amortization
                 )
     endif()

@@ -25,6 +25,7 @@ if (TARGET pico_scanvideo_dpi)
     if (PICO_RP2350)
         target_compile_definitions(textmode PRIVATE
                 PICO_USE_SW_SPIN_LOCKS=0
+                PICO_SCANVIDEO_RP2350_OVERLAY_SDK_SPINLOCKS=1
         )
     endif()
 endif()
