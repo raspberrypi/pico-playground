@@ -6,6 +6,10 @@ include(pico_sdk_import.cmake)
 # We also need PICO EXTRAS
 include(pico_extras_import.cmake)
 
+set(PICO_PLAYGROUND_PATH ${PROJECT_SOURCE_DIR})
+# Include playground_auto_set_url
+include(playground_auto_set_url.cmake)
+
 project(pico_playground C CXX)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
